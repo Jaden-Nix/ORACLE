@@ -3,6 +3,16 @@
 import { useEffect, useMemo, useRef } from "react";
 import type { BaseSceneProps } from "@/lib/oracle/types";
 
+// Animation constants
+const ANIMATION_CONSTANTS = {
+  DROP_COUNT: 720,
+  CLOUD_LAYERS: 4,
+  BOLT_TTL_BASE: 8,
+  BOLT_TTL_INTENSITY_MULTIPLIER: 12,
+  BOLT_PROBABILITY_BASE: 0.006,
+  BOLT_PROBABILITY_INTENSITY_MULTIPLIER: 0.03,
+} as const;
+
 const palettes = {
   volatile: { sky: "#080713", cloud: "rgba(40,28,70,.72)", rain: "166,188,255", bolt: "188,145,255" },
   building: { sky: "#071017", cloud: "rgba(18,37,52,.78)", rain: "127,176,202", bolt: "158,224,255" },
@@ -23,7 +33,7 @@ export function StormScene({ intensity = 0.7, mood = "volatile" }: BaseSceneProp
   const ttl = useRef(0);
   const drops = useMemo<Drop[]>(
     () =>
-      Array.from({ length: 720 }, () => ({
+      Array.from({ length: ANIMATION_CONSTANTS.DROP_COUNT }, () => ({
         x: Math.random(),
         y: Math.random(),
         len: 12 + Math.random() * 24,
@@ -63,7 +73,9 @@ export function StormScene({ intensity = 0.7, mood = "volatile" }: BaseSceneProp
         points.push([x, y]);
       }
       bolt.current = points;
-      ttl.current = 8 + Math.floor(intensity * 12);
+      ttl.current =
+        ANIMATION_CONSTANTS.BOLT_TTL_BASE +
+        Math.floor(intensity * ANIMATION_CONSTANTS.BOLT_TTL_INTENSITY_MULTIPLIER);
     };
 
     const draw = () => {
@@ -79,7 +91,7 @@ export function StormScene({ intensity = 0.7, mood = "volatile" }: BaseSceneProp
       ctx.fillStyle = horizon;
       ctx.fillRect(0, 0, w, h);
 
-      for (let layer = 0; layer < 4; layer += 1) {
+      for (let layer = 0; layer < ANIMATION_CONSTANTS.CLOUD_LAYERS; layer += 1) {
         ctx.fillStyle = palette.cloud;
         ctx.beginPath();
         const y = h * (0.07 + layer * 0.075);
@@ -94,7 +106,13 @@ export function StormScene({ intensity = 0.7, mood = "volatile" }: BaseSceneProp
         ctx.fill();
       }
 
-      if (!ttl.current && Math.random() < 0.006 + intensity * 0.03) makeBolt(w, h);
+      if (
+        !ttl.current &&
+        Math.random() <
+          ANIMATION_CONSTANTS.BOLT_PROBABILITY_BASE +
+            intensity * ANIMATION_CONSTANTS.BOLT_PROBABILITY_INTENSITY_MULTIPLIER
+      )
+        makeBolt(w, h);
       if (ttl.current) {
         ctx.save();
         ctx.lineJoin = "round";

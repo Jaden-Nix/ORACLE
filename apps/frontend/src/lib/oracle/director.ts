@@ -1,17 +1,36 @@
 import type { OracleSceneProps } from "./types";
 
+// Scene selection thresholds
+const SCENE_THRESHOLDS = {
+  INTENSITY_CRITICAL: 0.82,
+  INTENSITY_VOLATILE: 0.48,
+  INTENSITY_OVERLOADED: 0.72,
+  INTENSITY_BUSY: 0.42,
+  INTENSITY_UNKNOWN: 0.55,
+  INTENSITY_STABLE: 0.3,
+  INTENSITY_CRITICAL_OCEAN: 0.78,
+  INTENSITY_TENSE_OCEAN: 0.46,
+} as const;
+
+// Intensity modifier weights
+const INTENSITY_MODIFIERS = {
+  CRITICAL_BOOST: 0.22,
+  CALM_REDUCE: 0.18,
+  CONCERN_BOOST: 0.12,
+} as const;
+
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
 
 function inferIntensity(query: string, base: number) {
   let score = base;
   if (/(critical|survive|make it|dying|emergency|crash|urgent|deadline)/i.test(query)) {
-    score += 0.22;
+    score += INTENSITY_MODIFIERS.CRITICAL_BOOST;
   }
   if (/(great|good|calm|stable|aligned|growth|vision)/i.test(query)) {
-    score -= 0.18;
+    score -= INTENSITY_MODIFIERS.CALM_REDUCE;
   }
   if (/(12|many|all|overwhelmed|bitcoin|crypto|market|burn|runway)/i.test(query)) {
-    score += 0.12;
+    score += INTENSITY_MODIFIERS.CONCERN_BOOST;
   }
   return clamp01(Number(score.toFixed(2)));
 }
@@ -24,7 +43,12 @@ export function directOracle(query: string): OracleSceneProps {
     return {
       scene: "storm",
       intensity,
-      mood: intensity > 0.82 ? "crash" : intensity > 0.48 ? "volatile" : "building",
+      mood:
+        intensity > SCENE_THRESHOLDS.INTENSITY_CRITICAL
+          ? "crash"
+          : intensity > SCENE_THRESHOLDS.INTENSITY_VOLATILE
+            ? "volatile"
+            : "building",
       title: "Market Weather",
       metrics: [
         { label: "Volatility", value: Math.max(intensity, 0.58) },
@@ -41,7 +65,12 @@ export function directOracle(query: string): OracleSceneProps {
     return {
       scene: "city",
       intensity,
-      mood: intensity > 0.72 ? "overloaded" : intensity > 0.42 ? "busy" : "productive",
+      mood:
+        intensity > SCENE_THRESHOLDS.INTENSITY_OVERLOADED
+          ? "overloaded"
+          : intensity > SCENE_THRESHOLDS.INTENSITY_BUSY
+            ? "busy"
+            : "productive",
       title: "The Week Below",
       metrics: [
         { label: "Load", value: intensity },
@@ -58,7 +87,12 @@ export function directOracle(query: string): OracleSceneProps {
     return {
       scene: "cosmos",
       intensity,
-      mood: intensity > 0.55 ? "unknown" : intensity < 0.3 ? "expanding" : "stable",
+      mood:
+        intensity > SCENE_THRESHOLDS.INTENSITY_UNKNOWN
+          ? "unknown"
+          : intensity < SCENE_THRESHOLDS.INTENSITY_STABLE
+            ? "expanding"
+            : "stable",
       title: "Five Year Orbit",
       metrics: [
         { label: "Clarity", value: clamp01(0.88 - intensity * 0.25) },
@@ -77,7 +111,12 @@ export function directOracle(query: string): OracleSceneProps {
   return {
     scene: "ocean",
     intensity,
-    mood: intensity > 0.78 ? "critical" : intensity > 0.46 ? "tense" : "calm",
+    mood:
+      intensity > SCENE_THRESHOLDS.INTENSITY_CRITICAL_OCEAN
+        ? "critical"
+        : intensity > SCENE_THRESHOLDS.INTENSITY_TENSE_OCEAN
+          ? "tense"
+          : "calm",
     title: /make it/.test(q) ? "The Crossing" : "Your Runway",
     metrics: [
       { label: "Burn", value: intensity },
@@ -85,12 +124,15 @@ export function directOracle(query: string): OracleSceneProps {
       { label: "Morale", value: clamp01(0.82 - intensity * 0.28) },
     ],
     message:
-      intensity > 0.78
+      intensity > SCENE_THRESHOLDS.INTENSITY_CRITICAL_OCEAN
         ? "Hull is cracking. Turn before dawn."
-        : intensity > 0.46
+        : intensity > SCENE_THRESHOLDS.INTENSITY_TENSE_OCEAN
           ? "Hull is holding. Storm arrives soon."
           : "Water is calm. Keep the heading.",
-    cta: intensity > 0.78 ? "Show survival scenarios" : "Chart the route",
+    cta:
+      intensity > SCENE_THRESHOLDS.INTENSITY_CRITICAL_OCEAN
+        ? "Show survival scenarios"
+        : "Chart the route",
   };
 }
 

@@ -29,6 +29,11 @@ function MetricBar({ label, value }: { label: string; value: number }) {
   );
 }
 
+interface OracleCanvasSceneProps extends OracleSceneProps {
+  onCta?: () => void;
+  isThinking?: boolean;
+}
+
 export function OracleCanvasScene({
   scene,
   intensity,
@@ -37,7 +42,9 @@ export function OracleCanvasScene({
   metrics,
   message,
   cta,
-}: OracleSceneProps) {
+  onCta,
+  isThinking = false,
+}: OracleCanvasSceneProps) {
   const SceneComponent = sceneMap[scene] ?? OceanScene;
 
   return (
@@ -67,8 +74,12 @@ export function OracleCanvasScene({
             &quot;{message}&quot;
           </p>
           {cta ? (
-            <button className="pointer-events-auto mt-6 border border-[#c9a84c]/50 px-5 py-2 font-mono text-[11px] uppercase tracking-[0.24em] text-[#c9a84c] transition hover:border-[#c9a84c] hover:bg-[#c9a84c]/10">
-              {cta}
+            <button
+              onClick={onCta}
+              disabled={isThinking}
+              className="pointer-events-auto mt-6 border border-[#c9a84c]/50 px-5 py-2 font-mono text-[11px] uppercase tracking-[0.24em] text-[#c9a84c] transition hover:border-[#c9a84c] hover:bg-[#c9a84c]/10 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isThinking ? "Reading the signal…" : cta}
             </button>
           ) : null}
         </div>
