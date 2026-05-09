@@ -23,6 +23,7 @@ from langgraph.graph.state import CompiledStateGraph
 from copilotkit import CopilotKitMiddleware
 
 from .lead_state import LeadStateMiddleware
+from .oracle_schema import ORACLE_CANVAS_RESPONSE_SCHEMA
 from .timing import TimingMiddleware
 
 
@@ -153,11 +154,26 @@ def _gemini_llm():
     from langchain_google_genai import ChatGoogleGenerativeAI
 
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or "stub"
-    return ChatGoogleGenerativeAI(
-        model="gemini-3.1-flash-lite",
-        temperature=0,
-        api_key=api_key,
-    )
+    base_kwargs = {
+        "model": "gemini-3.1-flash-lite",
+        "temperature": 0,
+        "api_key": api_key,
+    }
+    if os.getenv("ORACLE_GEMINI_RESPONSE_SCHEMA", "1") != "0":
+        try:
+            return ChatGoogleGenerativeAI(
+                **base_kwargs,
+                response_mime_type="application/json",
+                response_schema=ORACLE_CANVAS_RESPONSE_SCHEMA,
+            )
+        except TypeError as e:
+            print(
+                "[runtime] WARN: installed langchain-google-genai does not "
+                f"accept Gemini response_schema kwargs ({e}); falling back to "
+                "CopilotKit tool schema only.",
+                flush=True,
+            )
+    return ChatGoogleGenerativeAI(**base_kwargs)
 
 
 def _build_gemini_deep(

@@ -15,7 +15,7 @@ const intelligence = new CopilotKitIntelligence({
 
 const agent = new LangGraphAgent({
   deploymentUrl:
-    process.env.LANGGRAPH_DEPLOYMENT_URL ?? "http://localhost:8123",
+    process.env.LANGGRAPH_DEPLOYMENT_URL ?? "http://localhost:8133",
   graphId: "default",
   langsmithApiKey: process.env.LANGSMITH_API_KEY ?? "",
   // 60 (vs LangGraph default 25) leaves headroom for the deepagents planner
@@ -32,7 +32,7 @@ const app = createCopilotEndpoint({
     identifyUser: () => ({ id: "default", name: "Hackathon User" }),
     licenseToken: process.env.COPILOTKIT_LICENSE_TOKEN,
     agents: { default: agent },
-    openGenerativeUI: true,
+    openGenerativeUI: false,
     a2ui: { injectA2UITool: false },
     mcpApps: {
       servers: [

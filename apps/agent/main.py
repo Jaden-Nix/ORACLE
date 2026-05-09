@@ -22,6 +22,7 @@ the contract the frontend is expected to honor.
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -83,11 +84,25 @@ if _AGENT_RUNTIME.startswith("gemini-") and (
     )
 
 
-backend_tools = load_notion_tools()
+def _load_oracle_prompt() -> str | None:
+    """Return the ORACLE prompt when the hackathon scene agent is present."""
+    prompt_path = Path(__file__).parent / "oracle" / "system-prompt.txt"
+    try:
+        prompt = prompt_path.read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return None
+    return prompt or None
 
 
-_integration_status = _format_integration_status()
-SYSTEM_PROMPT = build_system_prompt(_integration_status)
+_oracle_prompt = _load_oracle_prompt()
+if _oracle_prompt:
+    print("[oracle] ORACLE scene prompt active; backend tools disabled.", flush=True)
+    backend_tools = []
+    SYSTEM_PROMPT = _oracle_prompt
+else:
+    backend_tools = load_notion_tools()
+    _integration_status = _format_integration_status()
+    SYSTEM_PROMPT = build_system_prompt(_integration_status)
 
 
 _use_noop = (
