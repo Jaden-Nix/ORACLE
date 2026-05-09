@@ -29,8 +29,24 @@ export interface OracleSceneProps {
   cta?: string;
 }
 
+export interface OracleNode {
+  label: string;
+  x: number;
+  y: number;
+  value: number;
+}
+
+export interface OraclePalette {
+  bg: string;
+  accent: string;
+  nebula: string;
+}
+
 export interface BaseSceneProps {
   intensity?: number;
   mood?: OracleMood;
   metrics?: OracleMetric[];
+  nodes?: OracleNode[];
+  connections?: [number, number][];
+  palette?: OraclePalette;
 }

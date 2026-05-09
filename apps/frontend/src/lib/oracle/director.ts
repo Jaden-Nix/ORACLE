@@ -137,15 +137,11 @@ export function directOracle(query: string): OracleSceneProps {
 }
 
 export const initialOracleScene: OracleSceneProps = {
-  scene: "ocean",
-  intensity: 0.42,
-  mood: "calm",
+  scene: "cosmos",
+  intensity: 0.3,
+  mood: "expanding",
   title: "Ask The Oracle",
-  metrics: [
-    { label: "Signal", value: 0.68 },
-    { label: "Risk", value: 0.32 },
-    { label: "Momentum", value: 0.58 },
-  ],
-  message: "Speak. The world will answer.",
+  metrics: [],
+  message: "Speak. The cosmos will answer.",
   cta: "Begin",
 };
