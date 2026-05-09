@@ -5,6 +5,7 @@ import { Send, Sparkles } from "lucide-react";
 
 interface OracleInputProps {
   onSubmit: (query: string) => void;
+  isLoading?: boolean;
 }
 
 const demoQueries = [
@@ -15,12 +16,12 @@ const demoQueries = [
   "Am I going to make it?",
 ];
 
-export function OracleInput({ onSubmit }: OracleInputProps) {
+export function OracleInput({ onSubmit, isLoading = false }: OracleInputProps) {
   const [query, setQuery] = useState("");
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const trimmed = query.trim();
-    if (!trimmed) return;
+    if (!trimmed || isLoading) return;
     onSubmit(trimmed);
     setQuery("");
   };
@@ -34,7 +35,8 @@ export function OracleInput({ onSubmit }: OracleInputProps) {
               key={item}
               type="button"
               onClick={() => onSubmit(item)}
-              className="shrink-0 border border-[#4a3f28] bg-[#040508]/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[#e8e4d9]/70 backdrop-blur transition hover:border-[#c9a84c]/70 hover:text-[#c9a84c]"
+              disabled={isLoading}
+              className="shrink-0 border border-[#4a3f28] bg-[#040508]/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[#e8e4d9]/70 backdrop-blur transition hover:border-[#c9a84c] hover:bg-[#040508]/75 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {item}
             </button>
@@ -49,12 +51,14 @@ export function OracleInput({ onSubmit }: OracleInputProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Ask the Oracle..."
-            className="min-w-0 flex-1 bg-transparent py-3 font-mono text-sm text-[#e8e4d9] outline-none placeholder:text-[#e8e4d9]/42"
+            disabled={isLoading}
+            className="min-w-0 flex-1 bg-transparent py-3 font-mono text-sm text-[#e8e4d9] outline-none placeholder:text-[#e8e4d9]/42 disabled:opacity-50 disabled:cursor-not-allowed"
           />
           <button
             type="submit"
             aria-label="Ask the Oracle"
-            className="grid size-10 shrink-0 place-items-center border border-[#c9a84c]/35 text-[#c9a84c] transition hover:border-[#c9a84c] hover:bg-[#c9a84c]/10"
+            disabled={isLoading}
+            className="grid size-10 shrink-0 place-items-center border border-[#c9a84c]/35 text-[#c9a84c] transition hover:border-[#c9a84c] hover:bg-[#c9a84c]/10 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send size={16} aria-hidden />
           </button>
