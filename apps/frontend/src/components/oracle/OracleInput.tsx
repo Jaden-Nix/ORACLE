@@ -12,8 +12,6 @@ const demoQueries = [
   "How is my startup doing?",
   "Should I buy Bitcoin right now?",
   "What's my 5-year vision?",
-  "I have 12 tasks due this week",
-  "Am I going to make it?",
 ];
 
 export function OracleInput({ onSubmit, isLoading = false }: OracleInputProps) {
@@ -36,7 +34,7 @@ export function OracleInput({ onSubmit, isLoading = false }: OracleInputProps) {
               type="button"
               onClick={() => onSubmit(item)}
               disabled={isLoading}
-              className="shrink-0 border border-[#4a3f28] bg-[#040508]/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[#e8e4d9]/70 backdrop-blur transition hover:border-[#c9a84c] hover:bg-[#040508]/75 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="shrink-0 border border-[#4a3f28] bg-[#040508]/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-[#e8e4d9]/70 backdrop-blur transition hover:border-[#c9a84c]/70 hover:text-[#c9a84c] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {item}
             </button>
@@ -52,13 +50,13 @@ export function OracleInput({ onSubmit, isLoading = false }: OracleInputProps) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Ask the Oracle..."
             disabled={isLoading}
-            className="min-w-0 flex-1 bg-transparent py-3 font-mono text-sm text-[#e8e4d9] outline-none placeholder:text-[#e8e4d9]/42 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="min-w-0 flex-1 bg-transparent py-3 font-mono text-sm text-[#e8e4d9] outline-none placeholder:text-[#e8e4d9]/42 disabled:cursor-not-allowed disabled:opacity-50"
           />
           <button
             type="submit"
             aria-label="Ask the Oracle"
             disabled={isLoading}
-            className="grid size-10 shrink-0 place-items-center border border-[#c9a84c]/35 text-[#c9a84c] transition hover:border-[#c9a84c] hover:bg-[#c9a84c]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="grid size-10 shrink-0 place-items-center border border-[#c9a84c]/35 text-[#c9a84c] transition hover:border-[#c9a84c] hover:bg-[#c9a84c]/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Send size={16} aria-hidden />
           </button>

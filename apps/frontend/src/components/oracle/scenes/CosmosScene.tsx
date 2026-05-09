@@ -160,8 +160,8 @@ export function CosmosScene({
       }
 
       if (currentPalette) {
-        bgMain = currentPalette.bg;
-        const nebula = currentPalette.nebula;
+        bgMain = currentPalette.bg ?? bgMain;
+        const nebula = currentPalette.nebula ?? currentPalette.secondary ?? constNodeColor;
         // Different alphas + a hint of accent tint per layer for depth
         neb1Colors = [nebula, currentPalette.accent.replace(/[\d.]+\)$/, "0.04)"), "transparent"];
         neb2Colors = [nebula.replace(/[\d.]+\)$/, "0.08)"), "transparent", "transparent"];
